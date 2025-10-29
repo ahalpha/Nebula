@@ -186,11 +186,15 @@ public final class DatabaseManager {
             .update(opt, UpdateOperators.set(field, value));
     }
     
-    @SuppressWarnings("removal")
+    // TODO optimize to not require 2 db calls
     public void update(Object obj, int uid, String field, Object value, String field2, Object value2) {
+        /*
         getDatastore().find(obj.getClass())
             .filter(Filters.eq("_id", uid))
             .update(UpdateOperators.set(field, value), UpdateOperators.set(field2, value2));
+        */
+        update(obj, uid, field, value);
+        update(obj, uid, field2, value2);
     }
     
     public void updateNested(Object obj, int uid, String filter, int filterId, String field, Object item) {
