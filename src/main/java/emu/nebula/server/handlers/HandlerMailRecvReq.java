@@ -24,10 +24,10 @@ public class HandlerMailRecvReq extends NetHandler {
         var rsp = MailRecvResp.newInstance()
                 .setItems(changes.toProto());
         
-        var recvList = (IntList) changes.getExtraData();
-        
-        for (int id : recvList) {
-            rsp.addIds(id);
+        // Add mail ids that we received
+        if (changes.getExtraData() != null) {
+            var recvList = (IntList) changes.getExtraData();
+            recvList.forEach(rsp::addIds);
         }
         
         return this.encodeMsg(NetMsgId.mail_recv_succeed_ack, rsp);
