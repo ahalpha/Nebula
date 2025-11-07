@@ -18,6 +18,7 @@ import emu.nebula.game.instance.InstanceManager;
 import emu.nebula.game.inventory.Inventory;
 import emu.nebula.game.mail.Mailbox;
 import emu.nebula.game.quest.QuestManager;
+import emu.nebula.game.scoreboss.ScoreBossManager;
 import emu.nebula.game.story.StoryManager;
 import emu.nebula.game.tower.StarTowerManager;
 import emu.nebula.net.GameSession;
@@ -64,7 +65,8 @@ public class Player implements GameDatabaseObject {
     
     // Managers
     private final transient CharacterStorage characters;
-    private transient GachaManager gachaManager;
+    private final transient GachaManager gachaManager;
+    private final transient ScoreBossManager scoreBossManager;
     
     // Referenced data
     private transient Inventory inventory;
@@ -80,9 +82,12 @@ public class Player implements GameDatabaseObject {
     
     @Deprecated // Morphia only
     public Player() {
+        // Init player managers
         this.characters = new CharacterStorage(this);
         this.gachaManager = new GachaManager(this);
+        this.scoreBossManager = new ScoreBossManager(this);
         
+        // Init next packages stack
         this.nextPackages = new Stack<>();
     }
     
