@@ -27,6 +27,10 @@ public class PlayerChangeInfo {
         return this;
     }
 
+    public boolean isEmpty() {
+        return this.list == null || this.list.isEmpty();
+    }
+
     public void add(ProtoMessage<?> proto) {
         var any = Any.newInstance()
                 .setTypeUrl(GameConstants.PROTO_BASE_TYPE_URL + proto.getClass().getSimpleName())

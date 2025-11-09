@@ -15,14 +15,14 @@ public class HandlerItemProductReq extends NetHandler {
         var req = ItemProductReq.parseFrom(message);
         
         // Produce item
-        var changes = session.getPlayer().getInventory().produce(req.getId(), req.getNum());
+        var change = session.getPlayer().getInventory().produce(req.getId(), req.getNum(), null);
         
-        if (changes == null) {
+        if (change.isEmpty()) {
             return session.encodeMsg(NetMsgId.item_product_failed_ack);
         }
         
         // Send response
-        return session.encodeMsg(NetMsgId.item_product_succeed_ack, changes.toProto());
+        return session.encodeMsg(NetMsgId.item_product_succeed_ack, change.toProto());
     }
 
 }

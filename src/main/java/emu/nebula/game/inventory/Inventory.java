@@ -537,11 +537,16 @@ public class Inventory extends PlayerManager implements GameDatabaseObject {
     
     // Utility functions
     
-    public PlayerChangeInfo produce(int id, int num) {
+    public PlayerChangeInfo produce(int id, int num, PlayerChangeInfo change) {
+        // Init change info
+        if (change == null) {
+            change = new PlayerChangeInfo();
+        }
+        
         // Get production data
         var data = GameData.getProductionDataTable().get(id);
         if (data == null) {
-            return null;
+            return change;
         }
         
         // Get materials
@@ -549,11 +554,8 @@ public class Inventory extends PlayerManager implements GameDatabaseObject {
         
         // Verify that we have the materials
         if (!this.verifyItems(materials)) {
-            return null;
+            return change;
         }
-        
-        // Create change info
-        var change = new PlayerChangeInfo();
         
         // Remove items
         this.removeItems(materials, change);
