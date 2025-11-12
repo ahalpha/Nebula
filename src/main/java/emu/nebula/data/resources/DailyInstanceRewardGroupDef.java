@@ -1,12 +1,11 @@
 package emu.nebula.data.resources;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import emu.nebula.data.BaseDef;
 import emu.nebula.data.ResourceType;
+import emu.nebula.game.inventory.ItemRewardList;
 import emu.nebula.game.inventory.ItemRewardParam;
 import emu.nebula.util.JsonUtils;
+
 import lombok.Getter;
 
 @Getter
@@ -16,8 +15,8 @@ public class DailyInstanceRewardGroupDef extends BaseDef {
     private int DailyRewardType;
     private String BaseAwardPreview;
     
-    private transient List<ItemRewardParam> firstRewards;
-    private transient List<ItemRewardParam> rewards;
+    private transient ItemRewardList firstRewards;
+    private transient ItemRewardList rewards;
     
     @Override
     public int getId() {
@@ -27,8 +26,8 @@ public class DailyInstanceRewardGroupDef extends BaseDef {
     @Override
     public void onLoad() {
         // Init reward lists
-        this.firstRewards = new ArrayList<>();
-        this.rewards = new ArrayList<>();
+        this.firstRewards = new ItemRewardList();
+        this.rewards = new ItemRewardList();
         
         // Parse rewards
         var awards = JsonUtils.decodeList(this.BaseAwardPreview, int[].class);

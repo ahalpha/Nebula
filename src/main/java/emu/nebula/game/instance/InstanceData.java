@@ -1,9 +1,6 @@
 package emu.nebula.game.instance;
 
-import java.util.List;
-
-import emu.nebula.game.inventory.ItemParamMap;
-import emu.nebula.game.inventory.ItemRewardParam;
+import emu.nebula.game.inventory.ItemRewardList;
 import emu.nebula.game.player.Player;
 
 public interface InstanceData {
@@ -14,36 +11,18 @@ public interface InstanceData {
     
     public int getEnergyConsume();
     
-    // Handle reward generation
+    // Item rewards
     
-    public List<ItemRewardParam> getFirstRewards();
+    public ItemRewardList getFirstRewards();
     
-    public default List<ItemRewardParam> getFirstRewards(int rewardType) {
+    public default ItemRewardList getFirstRewards(int rewardType) {
         return getFirstRewards();
     }
     
-    public default ItemParamMap generateFirstRewards(int rewardType) {
-        return this.generateRewards(this.getFirstRewards());
-    }
+    public ItemRewardList getRewards();
     
-    public List<ItemRewardParam> getRewards();
-    
-    public default List<ItemRewardParam> getRewards(int rewardType) {
+    public default ItemRewardList getRewards(int rewardType) {
         return getRewards();
-    }
-    
-    public default ItemParamMap generateRewards(int rewardType) {
-        return this.generateRewards(this.getRewards());
-    }
-    
-    public default ItemParamMap generateRewards(List<ItemRewardParam> params) {
-        var map = new ItemParamMap();
-        
-        for (var param : params) {
-            map.add(param.getId(), param.getRandomCount());
-        }
-        
-        return map;
     }
     
     /**

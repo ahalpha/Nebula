@@ -181,7 +181,7 @@ public class Character implements GameDatabaseObject {
         params.add(GameConstants.GOLD_ITEM_ID, (int) Math.ceil(exp * 0.15D));
         
         // Verify that the player has the items
-        if (!this.getPlayer().getInventory().verifyItems(params)) {
+        if (!this.getPlayer().getInventory().hasItems(params)) {
             return null;
         }
         
@@ -207,7 +207,7 @@ public class Character implements GameDatabaseObject {
         }
         
         // Verify that the player has the items
-        if (!this.getPlayer().getInventory().verifyItems(data.getMaterials())) {
+        if (!this.getPlayer().getInventory().hasItems(data.getMaterials())) {
             return null;
         }
         
@@ -257,7 +257,7 @@ public class Character implements GameDatabaseObject {
         }
         
         // Verify that the player has the items
-        if (!this.getPlayer().getInventory().verifyItems(data.getMaterials())) {
+        if (!this.getPlayer().getInventory().hasItems(data.getMaterials())) {
             return null;
         }
         

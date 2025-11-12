@@ -1,12 +1,10 @@
 package emu.nebula.data.resources;
 
-import java.util.List;
-
 import emu.nebula.data.BaseDef;
 import emu.nebula.data.GameData;
 import emu.nebula.data.ResourceType;
 import emu.nebula.game.instance.InstanceData;
-import emu.nebula.game.inventory.ItemRewardParam;
+import emu.nebula.game.inventory.ItemRewardList;
 import lombok.Getter;
 
 @Getter
@@ -36,18 +34,18 @@ public class DailyInstanceDef extends BaseDef implements InstanceData {
     
     @Override
     @Deprecated
-    public List<ItemRewardParam> getFirstRewards() {
+    public ItemRewardList getFirstRewards() {
         return null;
     }
 
     @Override
     @Deprecated
-    public List<ItemRewardParam> getRewards() {
+    public ItemRewardList getRewards() {
         return null;
     }
     
     @Override
-    public List<ItemRewardParam> getFirstRewards(int rewardType) {
+    public ItemRewardList getFirstRewards(int rewardType) {
         var data = this.getRewardGroup(rewardType);
         
         if (data != null) {
@@ -58,7 +56,7 @@ public class DailyInstanceDef extends BaseDef implements InstanceData {
     }
     
     @Override
-    public List<ItemRewardParam> getRewards(int rewardType) {
+    public ItemRewardList getRewards(int rewardType) {
         var data = this.getRewardGroup(rewardType);
         
         if (data != null) {

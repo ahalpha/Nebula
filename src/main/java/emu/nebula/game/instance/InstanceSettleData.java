@@ -19,9 +19,9 @@ public class InstanceSettleData {
     
     public void generateRewards(InstanceData data, int rewardType) {
         if (this.isFirst) {
-            this.firstRewards = data.generateFirstRewards(rewardType);
+            this.firstRewards = data.getFirstRewards(rewardType).generate();
         }
         
-        this.rewards = data.generateRewards(rewardType);
+        this.rewards = data.getRewards(rewardType).generate();
     }
 }

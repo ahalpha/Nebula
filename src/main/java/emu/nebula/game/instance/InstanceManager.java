@@ -115,7 +115,7 @@ public class InstanceManager extends PlayerManager {
         
         for (int i = 0; i < count; i++) {
             // Generate rewards for each settle count
-            var rewards = data.generateRewards(rewardType);
+            var rewards = data.getRewards(rewardType).generate();
             
             // Add to reward list
             list.add(rewards);

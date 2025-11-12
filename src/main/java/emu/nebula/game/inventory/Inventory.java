@@ -483,7 +483,7 @@ public class Inventory extends PlayerManager implements GameDatabaseObject {
     /**
      * Checks if the player has enough quanity of this item
      */
-    public synchronized boolean verifyItem(int id, int count) {
+    public synchronized boolean hasItem(int id, int count) {
         // Sanity check
         if (count == 0) {
             return true;
@@ -511,6 +511,12 @@ public class Inventory extends PlayerManager implements GameDatabaseObject {
             case Char -> {
                 yield getPlayer().getCharacters().hasCharacter(id);
             }
+            case CharacterSkin -> {
+                yield this.hasSkin(id);
+            }
+            case Title -> {
+                yield this.getTitles().contains(id);
+            }
             default -> {
                 // Not implemented
                 yield false;
@@ -521,11 +527,11 @@ public class Inventory extends PlayerManager implements GameDatabaseObject {
         return result;
     }
     
-    public synchronized boolean verifyItems(ItemParamMap params) {
+    public synchronized boolean hasItems(ItemParamMap params) {
         boolean hasItems = true;
         
         for (var param : params.entries()) {
-            hasItems = this.verifyItem(param.getIntKey(), param.getIntValue());
+            hasItems = this.hasItem(param.getIntKey(), param.getIntValue());
             
             if (!hasItems) {
                 return hasItems;
@@ -553,7 +559,7 @@ public class Inventory extends PlayerManager implements GameDatabaseObject {
         var materials = data.getMaterials().mulitply(num);
         
         // Verify that we have the materials
-        if (!this.verifyItems(materials)) {
+        if (!this.hasItems(materials)) {
             return change;
         }
         
@@ -572,7 +578,7 @@ public class Inventory extends PlayerManager implements GameDatabaseObject {
         var change = new PlayerChangeInfo();
         
         // Make sure we have the gems
-        if (!this.verifyItem(GameConstants.ENERGY_BUY_ITEM_ID, 30)) {
+        if (!this.hasItem(GameConstants.ENERGY_BUY_ITEM_ID, 30)) {
             return change;
         }
         
@@ -604,7 +610,7 @@ public class Inventory extends PlayerManager implements GameDatabaseObject {
         // Make sure we have the currency
         int cost = buyCount * currencyCount;
         
-        if (!this.verifyItem(currencyId, cost)) {
+        if (!this.hasItem(currencyId, cost)) {
             return change;
         }
         
@@ -631,7 +637,7 @@ public class Inventory extends PlayerManager implements GameDatabaseObject {
         }
         
         // Make sure we have this item
-        if (!this.verifyItem(id, count)) {
+        if (!this.hasItem(id, count)) {
             return change;
         }
         

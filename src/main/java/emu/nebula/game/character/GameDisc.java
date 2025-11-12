@@ -161,7 +161,7 @@ public class GameDisc implements GameDatabaseObject {
         params.add(GameConstants.GOLD_ITEM_ID, (int) Math.ceil(exp * 0.25D));
         
         // Verify that the player has the items
-        if (!this.getPlayer().getInventory().verifyItems(params)) {
+        if (!this.getPlayer().getInventory().hasItems(params)) {
             return null;
         }
         
@@ -190,7 +190,7 @@ public class GameDisc implements GameDatabaseObject {
         }
         
         // Verify that the player has the items
-        if (!this.getPlayer().getInventory().verifyItems(data.getMaterials())) {
+        if (!this.getPlayer().getInventory().hasItems(data.getMaterials())) {
             return null;
         }
         
@@ -218,7 +218,7 @@ public class GameDisc implements GameDatabaseObject {
         materials.add(this.getData().getTransformItemId(), count);
         
         // Verify that the player has the items
-        if (!this.getPlayer().getInventory().verifyItems(materials)) {
+        if (!this.getPlayer().getInventory().hasItems(materials)) {
             return null;
         }
         

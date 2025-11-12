@@ -1,11 +1,9 @@
 package emu.nebula.data.resources;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import emu.nebula.data.BaseDef;
 import emu.nebula.data.ResourceType;
 import emu.nebula.game.instance.InstanceData;
+import emu.nebula.game.inventory.ItemRewardList;
 import emu.nebula.game.inventory.ItemRewardParam;
 import emu.nebula.util.JsonUtils;
 
@@ -19,8 +17,8 @@ public class WeekBossLevelDef extends BaseDef implements InstanceData {
     private int NeedWorldClass;
     private String BaseAwardPreview;
     
-    private transient List<ItemRewardParam> firstRewards;
-    private transient List<ItemRewardParam> rewards;
+    private transient ItemRewardList firstRewards;
+    private transient ItemRewardList rewards;
     
     @Override
     public int getId() {
@@ -34,8 +32,8 @@ public class WeekBossLevelDef extends BaseDef implements InstanceData {
     @Override
     public void onLoad() {
         // Init reward lists
-        this.firstRewards = new ArrayList<>();
-        this.rewards = new ArrayList<>();
+        this.firstRewards = new ItemRewardList();
+        this.rewards = new ItemRewardList();
         
         // Parse rewards
         var awards = JsonUtils.decodeList(this.BaseAwardPreview, int[].class);

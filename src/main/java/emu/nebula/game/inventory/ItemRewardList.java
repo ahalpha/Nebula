@@ -9,7 +9,7 @@ public class ItemRewardList extends ArrayList<ItemRewardParam> {
         super();
     }
     
-    public ItemParamMap generateRewards() {
+    public ItemParamMap generate() {
         var map = new ItemParamMap();
         
         for (var param : this) {

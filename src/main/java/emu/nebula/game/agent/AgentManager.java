@@ -140,7 +140,7 @@ public class AgentManager extends PlayerManager implements GameDatabaseObject {
             }
             
             // Create rewards
-            var rewards = duration.getRewards().generateRewards();
+            var rewards = duration.getRewards().generate();
             result.setRewards(rewards);
             
             // Add to inventory
