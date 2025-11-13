@@ -21,6 +21,10 @@ public class ScoreBossModule extends GameContextModule {
         this.ranking = new ArrayList<>();
     }
     
+    private long getRefreshTime() {
+        return Nebula.getConfig().getServerOptions().leaderboardRefreshTime * 1000;
+    }
+    
     public synchronized List<ScoreBossRankData> getRanking() {
         if (System.currentTimeMillis() > this.nextUpdate) {
             this.updateRanking();
@@ -46,7 +50,7 @@ public class ScoreBossModule extends GameContextModule {
             this.ranking.add(entry.toProto());
         }
         
-        this.nextUpdate = System.currentTimeMillis() + 1000;
+        this.nextUpdate = System.currentTimeMillis() + this.getRefreshTime();
         this.lastUpdate = Nebula.getCurrentTime();
     }
 }
