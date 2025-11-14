@@ -247,7 +247,7 @@ public class FriendList extends PlayerManager {
     // Database
     
     public synchronized void loadFromDatabase() {
-        var friendships = Nebula.getGameDatabase().getObjects(Friendship.class, "ownerUid", this.getPlayer().getUid());
+        var friendships = Nebula.getGameDatabase().getObjects(Friendship.class, "playerUid", this.getPlayer().getUid());
         
         friendships.forEach(friendship -> {
             // Set ownership first
