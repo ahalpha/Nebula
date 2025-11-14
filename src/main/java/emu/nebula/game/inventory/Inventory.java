@@ -7,6 +7,8 @@ import dev.morphia.annotations.Id;
 import emu.nebula.GameConstants;
 import emu.nebula.Nebula;
 import emu.nebula.data.GameData;
+import emu.nebula.data.resources.MallShopDef;
+import emu.nebula.data.resources.ResidentGoodsDef;
 import emu.nebula.database.GameDatabaseObject;
 import emu.nebula.game.player.PlayerManager;
 import emu.nebula.game.quest.QuestCondType;
@@ -17,6 +19,7 @@ import emu.nebula.proto.Public.Item;
 import emu.nebula.proto.Public.Res;
 import emu.nebula.proto.Public.Title;
 import emu.nebula.proto.Public.UI32;
+import emu.nebula.util.String2IntMap;
 import emu.nebula.game.player.Player;
 import emu.nebula.game.player.PlayerChangeInfo;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -38,6 +41,10 @@ public class Inventory extends PlayerManager implements GameDatabaseObject {
     private IntSet titles;
     private IntSet honorList;
     
+    // Buy limit
+    private ItemParamMap shopBuyCount;
+    private String2IntMap mallBuyCount;
+    
     // Items/resources
     private transient Int2ObjectMap<GameResource> resources;
     private transient Int2ObjectMap<GameItem> items;
@@ -57,6 +64,9 @@ public class Inventory extends PlayerManager implements GameDatabaseObject {
         this.headIcons = new IntOpenHashSet();
         this.titles = new IntOpenHashSet();
         this.honorList = new IntOpenHashSet();
+        
+        this.shopBuyCount = new ItemParamMap();
+        this.mallBuyCount = new String2IntMap();
         
         // Add titles directly
         this.getTitles().add(player.getTitlePrefix());
@@ -640,27 +650,75 @@ public class Inventory extends PlayerManager implements GameDatabaseObject {
         return change;
     }
     
-    public PlayerChangeInfo buyItem(int currencyId, int currencyCount, ItemParamMap buyItems, int buyCount) {
-        return this.buyItem(currencyId, currencyCount, buyItems, buyCount, null);
-    }
-    
-    public PlayerChangeInfo buyItem(int currencyId, int currencyCount, ItemParamMap buyItems, int buyCount, PlayerChangeInfo change) {
-        // Player change info
-        if (change == null) {
-            change = new PlayerChangeInfo();
+    public PlayerChangeInfo buyMallItem(MallShopDef data, int buyCount) {
+        // Check stock
+        int stock = data.getStock(this.getPlayer());
+        if (buyCount > stock) {
+            return null;
         }
         
+        // Buy item
+        var change = this.buyItem(data.getExchangeItemId(), data.getExchangeItemQty(), data.getProducts(), buyCount);
+        
+        if (change == null) {
+            return null;
+        }
+        
+        // Update purchase limit
+        this.getMallBuyCount().addTo(data.getIdString(), buyCount);
+        Nebula.getGameDatabase().update(
+            this,
+            getUid(),
+            "mallBuyCount." + data.getIdString(),
+            getMallBuyCount().get(data.getIdString())
+        );
+        
+        // Return
+        return change;
+    }
+    
+    public PlayerChangeInfo buyShopItem(ResidentGoodsDef data, int buyCount) {
+        // Check stock
+        int stock = data.getStock(this.getPlayer());
+        if (buyCount > stock) {
+            return null;
+        }
+        
+        // Buy item
+        var change = this.buyItem(data.getCurrencyItemId(), data.getPrice(), data.getProducts(), buyCount);
+        
+        if (change == null) {
+            return null;
+        }
+        
+        // Update purchase limit
+        this.getShopBuyCount().add(data.getId(), buyCount);
+        Nebula.getGameDatabase().update(
+            this,
+            getUid(),
+            "shopBuyCount." + data.getId(),
+            getShopBuyCount().get(data.getId())
+        );
+        
+        // Return
+        return change;
+    }
+    
+    public PlayerChangeInfo buyItem(int currencyId, int currencyCount, ItemParamMap buyItems, int buyCount) {
         // Sanity check
         if (buyCount <= 0) {
-            return change;
+            return null;
         }
         
         // Make sure we have the currency
         int cost = buyCount * currencyCount;
         
         if (!this.hasItem(currencyId, cost)) {
-            return change;
+            return null;
         }
+
+        // Player change info
+        var change = new PlayerChangeInfo();
         
         // Remove currency item
         this.removeItem(currencyId, cost, change);

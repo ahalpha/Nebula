@@ -3,6 +3,7 @@ package emu.nebula.data.resources;
 import emu.nebula.data.BaseDef;
 import emu.nebula.data.ResourceType;
 import emu.nebula.game.inventory.ItemParamMap;
+import emu.nebula.game.player.Player;
 import lombok.Getter;
 
 @Getter
@@ -23,6 +24,10 @@ public class ResidentGoodsDef extends BaseDef {
     @Override
     public int getId() {
         return Id;
+    }
+
+    public int getStock(Player player) {
+        return Math.max(this.getMaximumLimit() - player.getInventory().getMallBuyCount().getInt(this.getId()), 0);
     }
     
     @Override

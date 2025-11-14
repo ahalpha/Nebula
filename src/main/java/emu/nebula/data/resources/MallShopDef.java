@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import emu.nebula.data.BaseDef;
 import emu.nebula.data.ResourceType;
 import emu.nebula.game.inventory.ItemParamMap;
+import emu.nebula.game.player.Player;
 import lombok.Getter;
 
 @Getter
@@ -25,6 +26,10 @@ public class MallShopDef extends BaseDef {
     @Override
     public int getId() {
         return IdString.hashCode();
+    }
+    
+    public int getStock(Player player) {
+        return Math.max(this.getStock() - player.getInventory().getMallBuyCount().get(this.getIdString()), 0);
     }
     
     @Override

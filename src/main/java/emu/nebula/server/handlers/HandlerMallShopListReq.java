@@ -28,7 +28,7 @@ public class HandlerMallShopListReq extends NetHandler {
             
             var info = ProductInfo.newInstance()
                     .setId(data.getIdString())
-                    .setStock(data.getStock())
+                    .setStock(data.getStock(session.getPlayer()))
                     .setRefreshTime(refreshTime);
             
             rsp.addList(info);

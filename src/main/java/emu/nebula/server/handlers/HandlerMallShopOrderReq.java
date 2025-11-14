@@ -22,12 +22,7 @@ public class HandlerMallShopOrderReq extends NetHandler {
         }
         
         // Buy items
-        var change = session.getPlayer().getInventory().buyItem(
-                data.getExchangeItemId(),
-                data.getExchangeItemQty(),
-                data.getProducts(),
-                req.getQty()
-        );
+        var change = session.getPlayer().getInventory().buyMallItem(data, req.getQty());
         
         if (change == null) {
             return session.encodeMsg(NetMsgId.mall_shop_order_failed_ack);

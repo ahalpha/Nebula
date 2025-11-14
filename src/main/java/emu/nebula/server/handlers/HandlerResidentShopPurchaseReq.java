@@ -23,17 +23,16 @@ public class HandlerResidentShopPurchaseReq extends NetHandler {
         }
         
         // Buy
-        var change = session.getPlayer().getInventory().buyItem(
-                data.getCurrencyItemId(),
-                data.getPrice(),
-                data.getProducts(),
-                req.getNumber()
-        );
+        var change = session.getPlayer().getInventory().buyShopItem(data, req.getNumber());
+        
+        if (change == null) {
+            return session.encodeMsg(NetMsgId.resident_shop_purchase_failed_ack);
+        }
         
         // Build response
         var rsp = ResidentShopPurchaseResp.newInstance()
                 .setChange(change.toProto())
-                .setPurchasedNumber(0); // Prevent avaliable item count from decreasing
+                .setPurchasedNumber(req.getNumber());
         
         rsp.getMutableShop()
             .setId(data.getShopId())
