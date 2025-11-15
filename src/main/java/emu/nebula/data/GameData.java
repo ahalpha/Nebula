@@ -94,6 +94,7 @@ public class GameData {
     @Getter private static DataTable<SubNoteSkillPromoteGroupDef> SubNoteSkillPromoteGroupDataTable = new DataTable<>();
     
     @Getter private static DataTable<StarTowerBookFateCardBundleDef> StarTowerBookFateCardBundleDataTable = new DataTable<>();
+    @Getter private static DataTable<StarTowerBookFateCardQuestDef> StarTowerBookFateCardQuestDataTable = new DataTable<>();
     @Getter private static DataTable<StarTowerBookFateCardDef> StarTowerBookFateCardDataTable = new DataTable<>();
     @Getter private static DataTable<FateCardDef> FateCardDataTable = new DataTable<>();
     
