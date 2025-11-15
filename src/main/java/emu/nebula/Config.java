@@ -24,6 +24,7 @@ public class Config {
 
     public String resourceDir = "./resources";
     public String dataDir = "./data";
+    public String patchListPath = "./patchlist.json";
 
     @Getter
     public static class DatabaseInfo {

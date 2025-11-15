@@ -1,5 +1,8 @@
 package emu.nebula.server;
 
+import java.io.File;
+import java.io.FileReader;
+
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
@@ -7,9 +10,12 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import emu.nebula.Config.HttpServerConfig;
+import emu.nebula.GameConstants;
 import emu.nebula.Nebula;
 import emu.nebula.Nebula.ServerType;
+import emu.nebula.proto.Pb.ClientDiff;
 import emu.nebula.server.routes.*;
+import emu.nebula.util.JsonUtils;
 import io.javalin.Javalin;
 import io.javalin.http.ContentType;
 import io.javalin.http.Context;
@@ -21,10 +27,15 @@ public class HttpServer {
     private ServerType type;
     private boolean started;
     
+    // Cached client diff
+    private PatchList patchlist;
+    private byte[] diff;
+    
     public HttpServer(ServerType type) {
         this.app = Javalin.create();
         this.type = type;
 
+        this.loadPatchList();
         this.addRoutes();
     }
     
@@ -47,6 +58,39 @@ public class HttpServer {
         sslContextFactory.setSniRequired(false);
         sslContextFactory.setRenegotiationAllowed(false);
         return sslContextFactory;
+    }
+    
+    // Patch list
+    
+    public long getDataVersion() {
+        return getPatchlist() != null ? getPatchlist().getVersion() : GameConstants.DATA_VERSION;
+    }
+    
+    public synchronized void loadPatchList() {
+        // Clear
+        this.patchlist = null;
+        this.diff = null;
+        
+        // Get file
+        File file = new File(Nebula.getConfig().getPatchListPath());
+        
+        if (!file.exists()) {
+            this.diff = ClientDiff.newInstance().toByteArray();
+            return;
+        }
+        
+        // Load
+        try (FileReader reader = new FileReader(file)) {
+            this.patchlist = JsonUtils.loadToClass(reader, PatchList.class);
+            this.diff = patchlist.toProto().toByteArray();
+        } catch (Exception e) {
+            this.patchlist = null;
+            this.diff = ClientDiff.newInstance().toByteArray();
+        }
+        
+        if (this.patchlist != null) {
+            Nebula.getLogger().info("Loaded patchlist version " + patchlist.getVersion());
+        }
     }
     
     // Start server
@@ -107,7 +151,7 @@ public class HttpServer {
         
         // https://nova-static.stellasora.global/
         getApp().get("/meta/serverlist.html", new MetaServerlistHandler(this));
-        getApp().get("/meta/win.html", new MetaWinHandler());
+        getApp().get("/meta/win.html", new MetaWinHandler(this));
     }
     
     private void addGameServerRoutes() {

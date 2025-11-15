@@ -11,6 +11,11 @@ public class ReloadCommand implements CommandHandler {
     @Override
     public void execute(CommandArgs args) {
         Nebula.loadConfig();
+        
+        if (Nebula.getHttpServer() != null) {
+            Nebula.getHttpServer().loadPatchList();
+        }
+        
         args.sendMessage("Reloaded the server config");
     }
 

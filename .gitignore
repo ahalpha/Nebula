@@ -71,6 +71,7 @@ tmp/
 # Extra
 Nebula Handbook.txt
 config.json
+patchlist.json
 *.mv
 *.exe
 *.p12

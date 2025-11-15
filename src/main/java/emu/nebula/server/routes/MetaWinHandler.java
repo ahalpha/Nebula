@@ -2,8 +2,9 @@ package emu.nebula.server.routes;
 
 import org.jetbrains.annotations.NotNull;
 
-import emu.nebula.proto.Pb.ClientDiff;
+import emu.nebula.server.HttpServer;
 import emu.nebula.util.AeadHelper;
+import emu.nebula.util.Utils;
 import io.javalin.http.ContentType;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
@@ -12,24 +13,27 @@ import lombok.Getter;
 
 @Getter(AccessLevel.PRIVATE)
 public class MetaWinHandler implements Handler {
-    private ClientDiff list;
-    private byte[] proto;
-
-    public MetaWinHandler() {
-        // Create client diff
-        this.list = ClientDiff.newInstance();
-        
-        // TODO load from json or something
-        
-        // Cache proto
-        this.proto = list.toByteArray();
+    private HttpServer server;
+    
+    public MetaWinHandler(HttpServer server) {
+        this.server = server;
     }
 
     @Override
     public void handle(@NotNull Context ctx) throws Exception {
-        // Result
+        // Get diff
+        var diffBytes = this.getServer().getDiff();
+        
+        // Sanity check
+        if (diffBytes == null) {
+            ctx.contentType(ContentType.APPLICATION_OCTET_STREAM);
+            ctx.result(Utils.EMPTY_BYTE_ARRAY);
+            return;
+        }
+        
+        // Encrypt patch list
         ctx.contentType(ContentType.APPLICATION_OCTET_STREAM);
-        ctx.result(AeadHelper.encryptCBC(this.getProto()));
+        ctx.result(AeadHelper.encryptCBC(diffBytes));
     }
 
 }
