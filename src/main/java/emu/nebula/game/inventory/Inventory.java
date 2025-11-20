@@ -635,20 +635,27 @@ public class Inventory extends PlayerManager implements GameDatabaseObject {
         return change.setSuccess(true);
     }
     
-    public PlayerChangeInfo buyEnergy() {
+    public PlayerChangeInfo buyEnergy(int count) {
+        // Validate count
+        if (count <= 0 || count > 6) {
+            return null;
+        }
+        
         // Create change info
         var change = new PlayerChangeInfo();
         
         // Make sure we have the gems
-        if (!this.hasItem(GameConstants.ENERGY_BUY_ITEM_ID, 30)) {
+        int cost = 30 * count;
+        
+        if (!this.hasItem(GameConstants.ENERGY_BUY_ITEM_ID, cost)) {
             return change;
         }
         
         // Remove gems
-        this.removeItem(GameConstants.ENERGY_BUY_ITEM_ID, 30, change);
+        this.removeItem(GameConstants.ENERGY_BUY_ITEM_ID, cost, change);
         
         // Add energy
-        this.getPlayer().addEnergy(60, change);
+        this.getPlayer().addEnergy(60 * count, change);
         
         // Success
         return change;

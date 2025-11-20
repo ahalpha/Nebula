@@ -3,6 +3,7 @@ package emu.nebula.server.handlers;
 import emu.nebula.net.NetHandler;
 import emu.nebula.net.NetMsgId;
 import emu.nebula.proto.EnergyBuy.EnergyBuyResp;
+import emu.nebula.proto.Public.UI32;
 import emu.nebula.net.HandlerId;
 import emu.nebula.net.GameSession;
 
@@ -11,8 +12,11 @@ public class HandlerEnergyBuyReq extends NetHandler {
 
     @Override
     public byte[] handle(GameSession session, byte[] message) throws Exception {
+        // Parse request
+        var req = UI32.parseFrom(message);
+        
         // Buy energy
-        var change = session.getPlayer().getInventory().buyEnergy();
+        var change = session.getPlayer().getInventory().buyEnergy(req.getValue());
         
         if (change == null) {
             return session.encodeMsg(NetMsgId.energy_buy_failed_ack);
